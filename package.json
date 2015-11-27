@@ -1,0 +1,19 @@
+{
+  "name": "fanscount",
+  "version": "0.0.1",
+  "description": "Fans count for clubs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/gaskar/fanscount.git"
+  },
+  "author": "boyov&sirun",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gaskar/fanscount/issues"
+  },
+  "homepage": "https://github.com/gaskar/fanscount#readme"
+}
