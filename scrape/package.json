@@ -11,6 +11,8 @@
   "dependencies": {
     "casperjs": "^1.1.0-beta3",
     "co": "^4.6.0",
-    "cogent": "^1.0.1"
+    "cogent": "^1.0.1",
+    "lodash": "^3.10.1",
+    "osmosis": "^0.1.0"
   }
 }
