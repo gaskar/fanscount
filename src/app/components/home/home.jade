@@ -3,5 +3,6 @@ h1 {{name}}
     .row
         .col-md-12
             .col-md-3(ng-repeat='country in countries')
+                p {{country.name}}
                 a(ng-click='homeCtrl.goToLeagues(country._id)')
                     img.country-image(src='{{::country.flag}}', ng-click='')

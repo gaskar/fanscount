@@ -34,7 +34,6 @@
     };
 
     HomeController.prototype.goToLeagues = function(country) {
-        console.log('country', country)
         this.$state.go('leagues.country', {country: country})
     }
 })();

@@ -18,7 +18,6 @@ exports.getFacebookUser = function(id) {
         .execQ();
 };
 
-
 exports.create = function (data) {
     var user = new User(data);
     return user.saveQ();

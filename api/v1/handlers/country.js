@@ -12,7 +12,6 @@ function CountryHandler(countryService) {
 CountryHandler.prototype.getAll = function(req, res, next) {
     return this.service.getAll()
         .then(function(countries) {
-            console.log('conuntries', countries);
             return res.status(200).send(countries)
         })
         .catch(function(err) {

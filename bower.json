@@ -22,7 +22,8 @@
     "bootstrap": "~3.3.5",
     "ngstorage": "~0.3.9",
     "lodash": "~3.10.1",
-    "ng-tags-input": "~3.0.0"
+    "ng-tags-input": "~3.0.0",
+    "hello": "~1.9.8"
   },
   "devDependencies": {
     "angular-mocks": "~1.4.2"

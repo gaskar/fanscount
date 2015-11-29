@@ -73,19 +73,19 @@ UserHandler.prototype.getOne = function(req, res, next) {
 };
 
 UserHandler.prototype.create = function(req, res, next) {
-        req.assert('name','required').notEmpty().len(1, 60);
-        req.assert('email','required').notEmpty().len(1, 50);
-        req.assert('id','required').notEmpty().len(1, 50);
+        //req.assert('name','required').notEmpty().len(1, 60);
+        //req.assert('email','required').notEmpty().len(1, 50);
+        //req.assert('id','required').notEmpty().len(1, 50);
 
-        var errors = req.validationErrors();
-        if (errors) {
-            res.send({validation: errors}, 400);
-            return;
-        }
+        //var errors = req.validationErrors();
+        //if (errors) {
+        //    res.send({validation: errors}, 400);
+        //    return;
+        //}
 
-        var user = new User(user);
-        user.clubs.push(req.body.clubId);
-        return user.save()
+        var user = new User(req.body.user);
+        user.clubs.push(req.body.club);
+        return user.saveQ()
             .then(function(user) {
                 res.status(201).send(user)
             })

@@ -30,4 +30,8 @@
                 console.log(err); //todo change this to error handler
             })
     };
+
+    LeagueController.prototype.goToClubs = function(league) {
+        this.$state.go('clubs.league', {league: league})
+    }
 })();

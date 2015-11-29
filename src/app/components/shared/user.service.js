@@ -17,10 +17,10 @@
         return this;
     }
 
-    UserService.prototype.signUp = function (userData) {
+    UserService.prototype.create = function (userData) {
         var deferred = this.$q.defer();
         this.$http({
-            url: this.apiUrl + '/users',
+            url: this.apiUrl + '/users/',
             method: 'POST',
             data: userData
         }).success(function(data) {
@@ -31,7 +31,7 @@
         return deferred.promise;
     };
 
-    UserService.prototype.update = function (userData) {
+     UserService.prototype.update = function (userData) {
         console.log(userData);
         var deferred = this.$q.defer();
         this.$http({

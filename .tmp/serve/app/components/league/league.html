@@ -3,7 +3,9 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <div ng-repeat="legue in leagues" class="col-md-3"><img src="{{::legue.logo}}" class="country-image"></div>
+      <div ng-repeat="league in leagues" class="col-md-3">
+        <p>{{league.name}}</p><a ng-click="leagueCtrl.goToClubs(league._id)"><img src="{{::league.logo}}" class="country-image"></a>
+      </div>
     </div>
   </div>
 </div>
