@@ -12,6 +12,16 @@
                 url: '/',
                 templateUrl: 'app/components/home/home.html',
                 controller: 'HomeController as homeCtrl'
+            })
+            .state('leagues', {
+                url: '/leagues',
+                abstract: true,
+                template: "<div ui-view></div>"
+            })
+            .state('leagues.country', {
+                url: '/country/:country',
+                templateUrl: 'app/components/league/league.html',
+                controller: 'LeagueController as leagueCtrl'
             });
 
         $urlRouterProvider.otherwise('/');

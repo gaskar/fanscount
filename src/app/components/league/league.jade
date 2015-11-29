@@ -1,0 +1,6 @@
+h1 {{name}}
+.container
+   .row
+      .col-md-12
+         .col-md-3(ng-repeat='legue in leagues')
+            img.country-image(src='{{::legue.logo}}')

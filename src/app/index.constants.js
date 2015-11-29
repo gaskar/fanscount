@@ -7,6 +7,5 @@
         .constant('malarkey', malarkey)
         .constant('moment', moment)
         .constant('lodash', _)
-        // .constant('apiUrl', 'http://localhost:3000/api/v1');
-        .constant('apiUrl', 'http://fanscount-staging.herokuapp.com/api/v1');
+        .constant('apiUrl', 'http://localhost:3000/api/v1');
 })();

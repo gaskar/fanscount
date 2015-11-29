@@ -10,7 +10,8 @@ var leagueSchema = mongoose.Schema({
             type: mongoose.Schema.ObjectId,
             ref: 'Country'
         }
-    }
+    },
+    logo: String
 });
 
 mongoose.model('League', leagueSchema);

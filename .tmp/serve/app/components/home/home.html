@@ -1,6 +1,9 @@
 
 <h1>{{name}}</h1>
-<!--navbar(current-user='currentUser', sign-out='mainCtrl.signOut()')-->
-<!--.container.main-->
-<!--    div(ng-if="currentUser", ng-include="'app/components/home/dashboard.html'")-->
-<!--    div(ng-if="!currentUser", ng-include="'app/components/home/signup.html'")-->
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div ng-repeat="country in countries" class="col-md-3"><a ng-click="homeCtrl.goToLeagues(country._id)"><img src="{{::country.flag}}" ng-click="" class="country-image"></a></div>
+    </div>
+  </div>
+</div>
