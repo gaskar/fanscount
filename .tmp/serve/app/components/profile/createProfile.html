@@ -1,0 +1,57 @@
+
+<navbar current-user="currentUser" sign-out="mainCtrl.signOut()"></navbar>
+<div class="container main">
+  
+  <div class="row signup-page-content">
+    <label>Select your status</label>
+    <select ng-model="userStatus" ng-change="createProfileCtrl.clearUser()" class="form-control">
+      <option ng-repeat="userStatus in userStatuses">{{userStatus}}</option>
+    </select>
+  </div>
+  <div ng-if="userStatus" class="row top-buffer">
+    <div ng-if="userProfileFields[userStatus].schoolField" class="form-group">
+      <label>{{userProfileFields[userStatus].schoolField}}</label>
+      <input type="text" ng-model="user[userProfileFields[userStatus].schoolFieldName]" placeholder="{{userProfileFields[userStatus].studyField}}" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>{{userProfileFields[userStatus].studyField}}</label>
+      <input type="text" ng-model="user[userProfileFields[userStatus].studyFieldName]" ng-if="userProfileFields[userStatus].studyFieldName !== 'subjects'" placeholder="{{userProfileFields[userStatus].studyField}}" class="form-control">
+      <tags-input ng-model="user[userProfileFields[userStatus].studyFieldName]" ng-if="userProfileFields[userStatus].studyFieldName === 'subjects'" placeholder="add new subject"></tags-input>
+    </div>
+    <div class="form-group">
+      <label>Add Education Institution</label>
+      <input type="text" ng-model="user.institution" placeholder="Add Education Institution" class="form-control">
+    </div>
+  </div>
+  <div class="row top-buffer">
+    <label>Select your interests</label>
+  </div>
+  <div class="row">
+    <label class="small">* Select 5-7 topics</label>
+    <tags-input ng-model="user.interests" add-from-autocomplete-only="true" placeholder="add new interest" min-length="1" max-tags="7" min-tags="5" on-tag-added="createProfileCtrl.interestAdded($tag.text)" on-tag-removed="createProfileCtrl.interestRemoved($tag.text)">
+      <auto-complete source="createProfileCtrl.loadInterests($query)" min-length="1"></auto-complete>
+    </tags-input>
+  </div>
+  <div ng-show="user.interests.length" class="row top-buffer">
+    <ul class="nav nav-pills">
+      <li ng-repeat="interest in user.interests" ng-class="{&quot;active&quot;: selectedInterest === interest.text}" style="width: 100%; margin-bottom: 15px;" class="active"><a ng-click="createProfileCtrl.triggerSelectInterest(interest.text)" style="margin-bottom: 10px;" class="pointer-cursor">Select topics for {{ interest.text }}</a>
+        <div ng-repeat="topic in interestsWithTopics[interest.text]" ng-click="createProfileCtrl.addTopics(topic, interest.text)" class="col-md-2">
+          <div ng-class="{&quot;selected-topic&quot;: createProfileCtrl.isSelectedTopic(topic, interest.text)}" class="topic-box"><span>{{topic}}</span></div>
+        </div>
+        <div ng-show="user.interests.length" class="col-md-2">
+          <input type="text" name="newTopic" placeholder="add a new topic" ng-model="$parent['newTopicFor' + interest.text]" ng-keyup="$event.keyCode === 13 ? createProfileCtrl.addNewTopicForInterest(interest.text) : null" class="form-control">
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="row top-buffer">
+    <div ng-show="errors.length" role="alert" class="alert alert-danger ng-hide">
+      <ul>
+        <li ng-repeat="err in errors">{{ err.msg }}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="row top-buffer">
+    <button type="button" ng-click="createProfileCtrl.updateUser()" class="btn btn-success">Update profile</button>
+  </div>
+</div>

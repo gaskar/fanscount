@@ -1,0 +1,32 @@
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a ui-sref="home" class="navbar-brand"><img src="assets/images/fanscount_logo.jpg"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul ng-hide="currentUser" class="nav navbar-nav navbar-right">
+        <li><a ui-sref="terms">Terms</a></li>
+      </ul>
+      <ul ng-show="currentUser" class="nav navbar-nav navbar-right">
+        <li><img style="height: 50px;" ng-src="{{currentUser.avatar.path || 'assets/images/default_avatar.png'}}" class="img-circle"></li>
+        <li class="dropdown"><a href="javascript:void(0)" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">{{ currentUser.fullName }}<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a ui-sref="profile.page">Profile</a></li>
+            <li><a ui-sref="terms">Terms</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="javascript:void(0)" ng-click="signOut()">Sign Out</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<script>
+  $(".navbar-nav li a").click(function(e) {
+      if(!$(e.target).hasClass('dropdown-toggle') )
+      {
+          $("#navbar").collapse("hide");
+      }
+  });
+</script>
