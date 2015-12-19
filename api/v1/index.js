@@ -9,7 +9,6 @@ var fs = require('fs');
 var express = require('express');
 var debug = require('debug')('fanscount:api:init');
 var app = module.exports = express();
-var passport = require('passport');
 
 var apiRoutesPath = './api/v1/routes';
 
@@ -31,7 +30,7 @@ function initializeRoute(route) {
     var routerPath = path.join(process.cwd(), apiRoutesPath, route);
     var router = require(routerPath);
 
-    router(app, passport);
+    router(app);
 }
 
 

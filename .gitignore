@@ -28,4 +28,7 @@ node_modules
 .idea
 
 scrape/leagues.json
+scrape/skippedClubs1.txt
 scrape/skippedClubs.txt
+
+.tmp

@@ -64,7 +64,6 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "postinstall": "./node_modules/.bin/bower install && ./node_modules/.bin/gulp build",
     "test": "gulp test"
   },
   "engines": {

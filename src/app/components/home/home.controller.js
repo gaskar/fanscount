@@ -21,12 +21,10 @@
 
     HomeController.prototype.init = function () {
         this.$.name = 'boyov & sirun';
+
         this.countryService.getAll()
             .then(function(countries) {
                 this.$.countries = countries;
-                console.log(this.$.countries);
-
-                console.log(countries)
             }.bind(this))
             .catch(function(err) {
                 console.log(err); //todo change this to error handler
@@ -34,6 +32,7 @@
     };
 
     HomeController.prototype.goToLeagues = function(country) {
-        this.$state.go('leagues.country', {country: country})
+        this.$state.go('leagues.country', {country: country});
     }
+
 })();

@@ -9,9 +9,14 @@ let proxy = process.argv[3];
 
 if (proxy) {
     osmosis.config({
-        proxy: 'http://' + proxy
+        proxy: 'http://' + proxy,
+        timeout: 15 * 1000
     });
 }
+
+// osmosis.config({
+//   timeout: 15 * 1000
+// });
 
 
 osmosis.get(uri + teamNumber)

@@ -1,24 +1,13 @@
 'use strict';
 
-require('../schemas/club');
-require('../schemas/league');
-require('../schemas/country');
-
 let childProcess = require('child_process'),
     _ = require('lodash'),
     co = require('co'),
     cogent = require('cogent'),
     request = require('request'),
     fs = require('fs'),
-    Q = require('Q'),
-
-    mongoose = require('mongoose-q')(require('../node_modules/mongoose')),
-    Club = mongoose.model('Club'),
-    League = mongoose.model('League'),
-    Country = mongoose.model('Country');
-
-
-mongoose.connect('mongodb://localhost/fanscount');
+    dbScripts = require('./dbScripts'),
+    Q = require('Q');
 
 let clubsSkippedWriteStream = fs.createWriteStream('skippedClubs.txt');
 
@@ -28,13 +17,20 @@ let proxiesList = [],
     errClubs = [],
     leagues = [],
     countries = [],
-    instancesCount = 50;
+    createdInLastWave = 0,
+    teamNumber = 1,
+    instances = [],
+    instancesCount = 5,
+    clubs = [],
+    clearAfter = 10;
 
 //let scraper = childProcess.spawn('casperjs', ['clubs.js']),
 //    leagues = '';
 let checkedProxiesCount = 0;
 
 co(function*() {
+    var x = 5;
+    yield x;
     let proxiesTxt = yield* cogent('http://txt.proxyspy.net/proxy.txt', {string: true});
 
     proxiesList = proxiesTxt.text.match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{2,4})/g);
@@ -48,86 +44,12 @@ co(function*() {
     }
     proxiesList = proxiesList.concat(dirtyProxiesList);
 
+    proxiesList = proxiesList.slice(0, 10);
     for (let i = 0; i < proxiesList.length; i++) {
         testProxy(proxiesList[i]);
     }
-    runInstances();
 });
 
-var getLeague = function (leagueName, country) {
-    for (let i = 0; i < leagues.length; i++) {
-        if (leagues[i].name === leagueName && leagues[i].country.countryName === country.name) {
-            return Q(leagues[i]);
-        }
-    }
-
-    let league = new League({
-        name: leagueName,
-        country: {
-            countryName: country.name,
-            countryId: country._id
-        }
-    });
-
-    return league.saveQ()
-        .then(function (league) {
-            leagues.push(league);
-
-            return league;
-        });
-};
-
-var getCountry = function (countryName) {
-    //console.log(countries[0], country[0] ? countries[0].name : );
-    for (let i = 0; i < countries.length; i++) {
-        if (countries[i].name === countryName) {
-            return Q(countries[i]);
-        }
-    }
-
-    let country = new Country({
-        name: countryName
-    });
-
-    return country.saveQ()
-        .then(function (country) {
-            countries.push(country);
-
-            return country;
-        });
-};
-
-var runInstances = function () {
-    instancesCount = approvedProxies.length ? Math.floor(approvedProxies.length / 2) : instancesCount;
-    for (var i = 1; i < instancesCount; i++) {
-        createScrapeInstance(i);
-    }
-};
-
-
-var testProxy = function (proxy) {
-    request({
-        'url': 'http://whoscored.com/Teams/1',
-        'proxy': 'http://' + proxy,
-        'timeout': 3000
-    }, function (error, response) {
-        checkedProxiesCount++;
-
-        if (!error && response.statusCode == 200) {
-            approvedProxies.push({
-                proxy: proxy,
-                inProgress: 0
-            });
-            console.log(proxy, approvedProxies.length);
-        } else {
-            //console.log(error);
-        }
-
-        if (checkedProxiesCount >= proxiesList.length) {
-            runInstances();
-        }
-    });
-};
 
 let findAvailableProxy = function () {
     let availableProxies = _.filter(approvedProxies, function (proxyObj) {
@@ -139,52 +61,82 @@ let findAvailableProxy = function () {
     return availableProxies[randomElementNumber];
 };
 
-let createScrapeInstance = function (start) {
-    let availableProxy = findAvailableProxy();
 
-    let scraper = childProcess.spawn('node', ['clubs.js', start, availableProxy.proxy]);
+var testProxy = function (proxy) {
+    request({
+        'url': 'http://whoscored.com/Teams/1',
+        'proxy': 'http://' + proxy,
+        'timeout': 5000
+    }, function (error, response) {
+        checkedProxiesCount++;
 
-    scraper.stdout.on('data', function (stdout) {
-        var clubInfo = JSON.parse(stdout);
-
-        if (clubInfo.errCode === 404) {
-            errClubs.push(clubInfo.teamNumber);
-            clubsSkippedWriteStream.write(clubInfo.teamNumber + ', ');
-        } else if (!clubInfo.name) {
-            console.log(clubInfo);
-            skippedClubs.push(start);
-            clubsSkippedWriteStream.write(clubInfo.teamNumber + ', ');
+        if (!error && response.statusCode == 200) {
+            approvedProxies.push({
+                proxy: proxy,
+                instances: 0
+            });
+            console.log(proxy, approvedProxies.length);
         } else {
-            let country;
-            console.log(clubInfo.country);
-            getCountry(clubInfo.country)
-                .then(function (countryObj) {
-                    country = countryObj;
-                    return getLeague(clubInfo.league, country);
-                })
-                .then(function (league) {
-                    clubInfo.league = {
-                        leagueName: league.name,
-                        leagueId: league._id
-                    };
-
-                    clubInfo.country = {
-                        countryName: country.name,
-                        countryId: country._id
-                    };
-
-                    console.log(clubInfo.teamNumber);
-
-                    Club.create(clubInfo);
-                });
+            //console.log(error);
         }
-    });
 
-
-    scraper.on('exit', function () {
-        availableProxy.inProgress = 0;
-        createScrapeInstance(instancesCount++);
-    });
+        if (checkedProxiesCount >= proxiesList.length) {
+            checkedProxiesCount = 0;
+            runInstances();
+        }
+    }).setMaxListeners(0);
 };
 
+let createScrapeInstance = function (teamNumber, proxyObj) {
+    let availableProxy = findAvailableProxy();
+    let scraper = childProcess.spawn('node', ['clubs.js', teamNumber, proxyObj.proxy]);
+    let defer = Q.defer();
+    let clubInfo = null;
 
+    scraper.stdout.on('data', function (stdout) {
+        clubInfo = JSON.parse(stdout);
+    });
+
+    scraper.on('exit', function () {
+      if (clubInfo.errCode === 404 || !clubInfo.name) {
+          defer.reject(clubInfo);
+      } else {
+          defer.resolve(clubInfo);
+      }
+    });
+
+    return defer.promise;
+};
+
+let createNewInstance = function(teamNumber, proxyObj) {
+  return createScrapeInstance(teamNumber++, proxyObj)
+    .then(function(clubInfo) {
+      console.log(clubInfo);
+      clubs.push(clubInfo);
+      proxyObj.inProgress = 0;
+    })
+    .catch(function(err) {
+      console.log('err', err);
+      clubsSkippedWriteStream.write(err.teamNumber + ', ');
+    });
+}
+
+let runInstances = function () {
+    let instancesCount = approvedProxies.length ? Math.floor(approvedProxies.length / 2) : instancesCount;
+
+    while(instancesCount--) {
+      // instances.push(checkAndCreateNewInstance(teamNumber++));
+      let proxyObj = findAvailableProxy();
+      createNewInstance(teamNumber++, proxyObj)
+        .then(function() {
+          if(clubs.length >= clearAfter) {
+            console.log(clubs);
+            clubs = [];
+            testProxy();
+          } else {
+            proxyObj = findAvailableProxy();
+            createNewInstance(teamNumber++, proxyObj);
+          }
+        })
+    }
+};
