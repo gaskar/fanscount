@@ -32,3 +32,5 @@ scrape/skippedClubs1.txt
 scrape/skippedClubs.txt
 
 .tmp
+
+dist/
