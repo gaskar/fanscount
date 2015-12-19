@@ -1,7 +1,0 @@
-h1 {{name}}
-.container
-   .row
-      .col-md-12
-         .col-md-2(ng-repeat='club in clubs', ng-if='club.logo')
-            img(src='{{::club.logo}}')
-            button.btn.btn-default(ng-click='clubCtrl.addFan(club._id)') add to favorites

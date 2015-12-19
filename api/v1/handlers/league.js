@@ -10,7 +10,6 @@ function LeagueHandler(leagueService) {
 }
 
 LeagueHandler.prototype.getLeaguesByCountry = function(req, res, next) {
-    console.log(req.params.country)
     return this.service.getByCountry(req.params.country)
         .then(function(countryLeagues) {
             return res.status(200).send(countryLeagues)

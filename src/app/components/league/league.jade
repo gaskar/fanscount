@@ -1,8 +1,0 @@
-h1 {{name}}
-.container
-   .row
-      .col-md-12
-         .col-md-3(ng-repeat='league in leagues')
-            p {{league.name}}
-            a(ng-click='leagueCtrl.goToClubs(league._id)')
-               img.country-image(src='{{::league.logo}}')
