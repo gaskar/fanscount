@@ -45,7 +45,7 @@ app.use('/styles', express.static(path.join(__dirname, '/dist/styles')));
 app.use('/maps', express.static(path.join(__dirname, '/dist/maps')));
 
 app.get(/(^\/$)/, function(req, res) {
-    res.sendfile(path.join(__dirname, '/dist/index.html'));
+    res.sendfile(path.join(__dirname, '/index.html'));
 });
 
 app.use(routes);
