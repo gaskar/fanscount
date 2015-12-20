@@ -11,8 +11,6 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 
-# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
-.grunt
 
 # node-waf configuration
 .lock-wscript
@@ -26,6 +24,7 @@ node_modules
 
 
 .idea
+build/
 
 scrape/leagues.json
 scrape/skippedClubs1.txt
