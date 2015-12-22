@@ -27,6 +27,7 @@
     "mongoose": "^4.2.4",
     "mongoose-q": "^0.1.0",
     "morgan": "^1.6.1",
+    "newrelic": "^1.24.0",
     "phantomjs": "~1.9.18",
     "q": "^1.4.1",
     "serve-favicon": "^2.3.0",

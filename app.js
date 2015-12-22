@@ -36,6 +36,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 app.use(cookieParser());
 app.use(session({ secret: 'SECRET', resave: true, saveUninitialized: true })); // session secret
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/assets', express.static(path.join(__dirname, '/dist/assets')));
