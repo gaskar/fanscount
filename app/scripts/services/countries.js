@@ -1,5 +1,13 @@
 'use strict';
 
-exports.a = 6;
+import request from '../helpers/request.js';
 
-exports.b = 'haha';
+exports.getAll = function() {
+  return request.makeCall('/api/v1/countries')
+    .then(function(data) {
+      return data;
+    })
+    .catch(function(err) {
+      console.error(err);
+    });
+};

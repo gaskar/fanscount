@@ -1,6 +1,8 @@
 'use strict';
-require('newrelic');
 
+if(process.env.NEW_RELIC_LICENSE_KEY) {
+  require('newrelic');
+}
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
@@ -40,11 +42,11 @@ app.use(session({ secret: 'SECRET', resave: true, saveUninitialized: true })); /
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/assets', express.static(path.join(__dirname, '/dist/assets')));
-app.use('/fonts', express.static(path.join(__dirname, '/dist/fonts')));
-app.use('/scripts', express.static(path.join(__dirname, '/dist/scripts')));
-app.use('/styles', express.static(path.join(__dirname, '/dist/styles')));
-app.use('/maps', express.static(path.join(__dirname, '/dist/maps')));
+app.use('/assets', express.static(path.join(__dirname, '/build/assets')));
+app.use('/fonts', express.static(path.join(__dirname, '/build/fonts')));
+app.use('/scripts', express.static(path.join(__dirname, '/build/scripts')));
+app.use('/styles', express.static(path.join(__dirname, '/build/styles')));
+app.use('/maps', express.static(path.join(__dirname, '/build/maps')));
 
 app.get(/(^\/$)/, function(req, res) {
     res.sendfile(path.join(__dirname, '/index.html'));
