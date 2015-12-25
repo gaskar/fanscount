@@ -11,7 +11,7 @@
   "homepage": "https://github.com/gaskar/fanscount#readme",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "gulp build && node ./bin/www",
     "build": "gulp build",
     "test": "gulp test"
   },
