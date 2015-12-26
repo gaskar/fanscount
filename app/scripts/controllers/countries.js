@@ -9,13 +9,13 @@ const props = {
             {{#rows}}
               <tr>
                 {{#countries}}
-                <td>
-                    <span>{{name}}</span>
-                    <img src="{{flag}}" width="100" />
-                </td>
+                  <td>
+                      <span>{{name}}</span>
+                      <img src="{{flag}}" width="100" />
+                  </td>
                 {{/countries}}
-             </tr>
-             {{/rows}}`,
+              </tr>
+            {{/rows}}`,
   containerId: '#countries',
   itemsPerRow: 5
 };
@@ -23,33 +23,33 @@ const props = {
 /*
   output example {rows: [countries: [], countries[]]}
 */
-let createCountriesList = function(countries) {
-  let countriesArray = [];
+
+const createCountriesList = function (countries) {
+  const countriesArray = [];
   const itemsPerRow = props.itemsPerRow;
 
-  for(let i = 0; i < countries.length; i++) {
-    let position = parseInt(i / itemsPerRow);
+  for (let i = 0; i < countries.length; i++) {
+    const position = parseInt(i / itemsPerRow, 10);
 
-    if(i % itemsPerRow === 0) {
+    if (i % itemsPerRow === 0) {
       countriesArray[position] = {
         countries: []
       };
     }
-    
+
     countriesArray[position].countries.push(countries[i]);
   }
 
   return countriesArray;
-}
+};
 
-exports.init = function() {
-  var el = $(props.containerId);
+exports.init = function () {
+  const el = $(props.containerId);
   // console.log()
   return countryService.getAll()
-    .then(function(countries) {
+    .then(function (countries) {
       const countriesArray = createCountriesList(countries);
 
-      el.html(Template.render(props.template, {rows: countriesArray}));
-
+      el.html(Template.render(props.template, { rows: countriesArray }));
     });
 };

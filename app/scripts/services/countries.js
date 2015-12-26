@@ -2,12 +2,13 @@
 
 import request from '../helpers/request.js';
 
-exports.getAll = function() {
+
+exports.getAll = function () {
   return request.makeCall('/api/v1/countries')
-    .then(function(data) {
+    .then(function (data) {
       return data;
     })
-    .catch(function(err) {
+    .catch(function (err) {
       console.error(err);
     });
 };

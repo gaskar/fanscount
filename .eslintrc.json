@@ -1,0 +1,44 @@
+{
+    "extends": "airbnb",
+    "plugins": [
+        "react"
+    ],
+    "env": {
+        "browser": true,
+        "node": true,
+        "es6": true
+    },
+    "rules": {
+        "strict": 0,
+        "func-names": 0,
+        "comma-dangle": 0,
+        "no-console": 0,
+        "no-spaced-func": 1,
+        "space-before-function-paren": [1, {"anonymous": "always", "named": "never"}]
+    },
+
+    "ecmaFeatures": {
+        "arrowFunctions": true,
+        "binaryLiterals": true,
+        "blockBindings": true,
+        "classes": true,
+        "defaultParams": true,
+        "destructuring": true,
+        "forOf": true,
+        "generators": true,
+        "modules": true,
+        "objectLiteralComputedProperties": true,
+        "objectLiteralDuplicateProperties": true,
+        "objectLiteralShorthandMethods": true,
+        "objectLiteralShorthandProperties": true,
+        "octalLiterals": true,
+        "regexUFlag": true,
+        "regexYFlag": true,
+        "spread": true,
+        "superInFunctions": true,
+        "templateStrings": true,
+        "unicodeCodePointEscapes": true,
+        "globalReturn": true,
+        "jsx": true
+    }
+}

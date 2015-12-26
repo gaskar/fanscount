@@ -61,5 +61,8 @@
     "wiredep": "~2.2.2",
     "wrench": "~1.5.8"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint-config-airbnb": "^2.1.1",
+    "eslint-plugin-react": "^3.13.1"
+  }
 }
