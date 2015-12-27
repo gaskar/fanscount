@@ -14,7 +14,8 @@
         "comma-dangle": 0,
         "no-console": 0,
         "no-spaced-func": 1,
-        "space-before-function-paren": [1, {"anonymous": "always", "named": "never"}]
+        "space-before-function-paren": [1, {"anonymous": "always", "named": "never"}],
+        "no-unused-vars": 0
     },
 
     "ecmaFeatures": {
