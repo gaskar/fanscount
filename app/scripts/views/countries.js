@@ -10,17 +10,17 @@ const props = {
             {{#rows}}
               <tr>
                 {{#countries}}
-                  <td>
+                  <td data-country-id="{{_id}}">
                       <span>{{name}}</span>
                       <img src="{{flag}}" width="100" />
                   </td>
                 {{/countries}}
               </tr>
             {{/rows}}`,
-  containerId: '#countries',
+  container: '#countries',
   events: {
     'click': [{
-      '#countries > tr > td > img': 'onCountrySelect'
+      'tr > td': 'onCountrySelect'
     }]
   },
   itemsPerRow: 5
@@ -28,7 +28,9 @@ const props = {
 
 const events = {
   onCountrySelect(e) {
-    console.log(e.target);
+    console.log(self);
+    console.log($(this).data('country-id'));
+    // console.log($(e.target));
   }
 };
 
@@ -56,7 +58,7 @@ const createCountriesList = function (countries) {
 
 
 exports.init = function () {
-  const el = $(props.containerId);
+  const el = $(props.container);
 
   return countryService.getAll()
     .then(function (countries) {
@@ -64,7 +66,7 @@ exports.init = function () {
 
       const templ = Template.render(props.template, { rows: countriesArray });
 
-      bsCore.bindEvents(props.events, events);
+      bsCore.bindEvents.apply(props, [events]);
       el.html(templ);
     });
 };
