@@ -4,6 +4,8 @@ import $ from '../../libs/jquery-2.1.4.min.js';
 import bsCore from '../helpers/bscore.js';
 import Template from '../../libs/mustache.min.js';
 import countryService from '../services/countries';
+import leagues from './leagues'
+
 
 const props = {
   template: `
@@ -28,8 +30,10 @@ const props = {
 
 const events = {
   onCountrySelect(e) {
-    console.log(self);
-    console.log($(this).data('country-id'));
+    //console.log(leagues)
+    leagues.init($(this).data('country-id'));
+    //console.log(self);
+    //console.log($(this).data('country-id'));
     // console.log($(e.target));
   }
 };
@@ -55,6 +59,25 @@ const createCountriesList = function (countries) {
 
   return countriesArray;
 };
+
+//const createLeaguesList = function (leagues) {
+//  const leaguesArray = [];
+//  const itemsPerRow = props.itemsPerRow;
+//
+//  for (let i = 0; i < leagues.length; i++) {
+//    const position = parseInt(i / itemsPerRow, 10);
+//
+//    if (i % itemsPerRow === 0) {
+//      leaguesArray[position] = {
+//        countries: []
+//      };
+//    }
+//
+//    leaguesArray[position].countries.push(leagues[i]);
+//  }
+//
+//  return leaguesArray;
+//};
 
 
 exports.init = function () {
