@@ -5,11 +5,15 @@ var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
     id: {
-        type: String
+        type: String,
+        index: {
+            unique: true
+        }
     },
 
     name: {
-        type: String
+        type: String,
+        index: true
     },
 
     email: {
@@ -22,13 +26,18 @@ var UserSchema = new Schema({
         path: String
     },
 
-    clubs: {
-        type: [String]
+    likes: {
+        type: [mongoose.Schema.ObjectId]
+    },
+
+    disLikes: {
+        type: [mongoose.Schema.ObjectId]
     },
 
     deleted: {
         type: Boolean,
-        default: false
+        default: false,
+        sparse: true
     },
 
     updated: {

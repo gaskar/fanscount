@@ -47,6 +47,7 @@
     "lodash": "~3.10.1",
     "main-bower-files": "~2.9.0",
     "mongoose": "^4.2.4",
+    "mongoose-deep-populate": "^2.0.3",
     "mongoose-q": "^0.1.0",
     "morgan": "^1.6.1",
     "newrelic": "^1.24.0",

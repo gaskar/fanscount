@@ -14,5 +14,6 @@ exports.getOne = function (id) {
 exports.getByCountry = function(countryId) {
     return League
         .find({"country.countryId": countryId})
+        .select('-deleted -__v')
         .execQ();
 };

@@ -1,11 +1,9 @@
 'use strict';
 
-var validator = require('express-validator').validator;
-var _ = require('lodash');
-var mongoose = require('mongoose-q')(require('mongoose'));
-var League = mongoose.model('League');
+const mongoose = require('mongoose-q')(require('mongoose'));
+const League = mongoose.model('League');
 
-function LeagueHandler(leagueService) {
+function LeagueHandler (leagueService) {
     this.service = leagueService;
 }
 
