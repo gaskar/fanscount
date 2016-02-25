@@ -14,46 +14,51 @@ let clubsSkippedWriteStream = fs.createWriteStream('skippedClubs.txt');
 let proxiesList = [],
     approvedProxies = [],
     skippedClubs = [],
-    errClubs = [],
-    leagues = [],
-    countries = [],
-    createdInLastWave = 0,
     teamNumber = 1,
-    instances = [],
     instancesCount = 5,
     clubs = [],
-    clearAfter = 10;
+    clearAfter = 10,
+    testPromises = [];
 
-//let scraper = childProcess.spawn('casperjs', ['clubs.js']),
-//    leagues = '';
 let checkedProxiesCount = 0;
 
 co(function*() {
-    var x = 5;
-    yield x;
     let proxiesTxt = yield* cogent('http://txt.proxyspy.net/proxy.txt', {string: true});
 
     proxiesList = proxiesTxt.text.match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{2,4})/g);
 
     let proxiesBody = yield* cogent('https://free-proxy-list.net/', {string: true});
-
     let dirtyProxiesList = proxiesBody.text.match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?:<\/td><td>)(\d{2,4})/g);
 
-    for(let i = 0; i < dirtyProxiesList.length; i++) {
+    for (let i = 0; i < dirtyProxiesList.length; i++) {
         dirtyProxiesList[i] = dirtyProxiesList[i].replace('</td><td>', ':');
     }
     proxiesList = proxiesList.concat(dirtyProxiesList);
 
-    proxiesList = proxiesList.slice(0, 10);
+    //proxiesList = proxiesList.slice(0, 10);
     for (let i = 0; i < proxiesList.length; i++) {
-        testProxy(proxiesList[i]);
+        testPromises.push(testProxy(proxiesList[i]));
     }
+
+    Q.all(testPromises)
+        .then(function(results) {
+            return results.filter(function(el) {
+                return Object.keys(el).length;
+            });
+        })
+        .then(function(approvedProxies) {
+            runInstances(approvedProxies);
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
+
 });
 
 
-let findAvailableProxy = function () {
+let findAvailableProxy = function (approvedProxies) {
     let availableProxies = _.filter(approvedProxies, function (proxyObj) {
-        return !proxyObj.inProgress;
+        return !proxyObj.instances;
     });
 
     let randomElementNumber = Math.floor(Math.random() * availableProxies.length);
@@ -63,6 +68,7 @@ let findAvailableProxy = function () {
 
 
 var testProxy = function (proxy) {
+    var defer = Q.defer();
     request({
         'url': 'http://whoscored.com/Teams/1',
         'proxy': 'http://' + proxy,
@@ -71,25 +77,21 @@ var testProxy = function (proxy) {
         checkedProxiesCount++;
 
         if (!error && response.statusCode == 200) {
-            approvedProxies.push({
+            defer.resolve({
                 proxy: proxy,
                 instances: 0
             });
-            console.log(proxy, approvedProxies.length);
-        } else {
-            //console.log(error);
-        }
 
-        if (checkedProxiesCount >= proxiesList.length) {
-            checkedProxiesCount = 0;
-            runInstances();
+        } else {
+            defer.resolve({});
         }
     }).setMaxListeners(0);
+
+    return defer.promise;
 };
 
-let createScrapeInstance = function (teamNumber, proxyObj) {
-    let availableProxy = findAvailableProxy();
-    let scraper = childProcess.spawn('node', ['clubs.js', teamNumber, proxyObj.proxy]);
+let createScrapeInstance = function (teamNumber, proxy) {
+    let scraper = childProcess.spawn('node', ['clubs.js', teamNumber, proxy]);
     let defer = Q.defer();
     let clubInfo = null;
 
@@ -98,45 +100,44 @@ let createScrapeInstance = function (teamNumber, proxyObj) {
     });
 
     scraper.on('exit', function () {
-      if (clubInfo.errCode === 404 || !clubInfo.name) {
-          defer.reject(clubInfo);
-      } else {
-          defer.resolve(clubInfo);
-      }
+        if (clubInfo.errCode === 404 || !clubInfo.name) {
+            defer.reject(clubInfo);
+        } else {
+            defer.resolve(clubInfo);
+        }
     });
 
     return defer.promise;
 };
 
-let createNewInstance = function(teamNumber, proxyObj) {
-  return createScrapeInstance(teamNumber++, proxyObj)
-    .then(function(clubInfo) {
-      console.log(clubInfo);
-      clubs.push(clubInfo);
-      proxyObj.inProgress = 0;
-    })
-    .catch(function(err) {
-      console.log('err', err);
-      clubsSkippedWriteStream.write(err.teamNumber + ', ');
-    });
-}
-
-let runInstances = function () {
-    let instancesCount = approvedProxies.length ? Math.floor(approvedProxies.length / 2) : instancesCount;
-
-    while(instancesCount--) {
-      // instances.push(checkAndCreateNewInstance(teamNumber++));
-      let proxyObj = findAvailableProxy();
-      createNewInstance(teamNumber++, proxyObj)
-        .then(function() {
-          if(clubs.length >= clearAfter) {
-            console.log(clubs);
-            clubs = [];
-            testProxy();
-          } else {
-            proxyObj = findAvailableProxy();
-            createNewInstance(teamNumber++, proxyObj);
-          }
+let createNewInstance = function (teamNumber, proxyObj) {
+    return createScrapeInstance(teamNumber++, proxyObj)
+        .then(function (clubInfo) {
+            console.log(clubInfo);
+            proxyObj.inProgress = 0;
         })
+        .catch(function (err) {
+            console.log('err', err);
+            clubsSkippedWriteStream.write(err.teamNumber + ', ');
+        });
+};
+
+let runInstances = function (approvedProxies) {
+    let instancesCount = Math.floor(approvedProxies.length / 2);
+
+    let teamNumber = 1;
+
+    while (instancesCount--) {
+
+        (function() {
+            let proxyObj = findAvailableProxy();
+
+            createScrapeInstance(teamNumber++, proxyObj.proxy)
+                .then(function(clubInfo) {
+                    console.log(clubInfo);
+                    createScrapeInstance(teamNumber++, )
+                });
+        })();
+
     }
 };
